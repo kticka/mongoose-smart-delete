@@ -1,9 +1,11 @@
+const Mongoose    = require('mongoose')
+const createModel = require('./setup/createModel')
 describe('SoftDelete - deleteMany middleware', () => {
 
   let Model, TriggeredHooks = {}
 
   beforeAll(async () => {
-    const Schema = global.Mongoose.Schema({})
+    const Schema = Mongoose.Schema({})
     Schema.pre('deleteMany', {document: true, query: false}, function (next) {
       TriggeredHooks.preDeleteMany = true
       next()
@@ -14,7 +16,7 @@ describe('SoftDelete - deleteMany middleware', () => {
       next()
     })
 
-    Model = global.Model(Schema)
+    Model = createModel(Schema)
   })
 
   beforeEach(async () => {

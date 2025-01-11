@@ -1,8 +1,9 @@
+const createModel = require('./setup/createModel')
 describe('SoftDelete - deleteMany', () => {
   let Model
 
   beforeAll(async () => {
-    Model = global.Model({num: Number})
+    Model = createModel({num: Number})
   })
 
   beforeEach(async () => {
