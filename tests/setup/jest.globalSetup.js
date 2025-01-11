@@ -1,5 +1,5 @@
-const MongoDB  = require('mongodb-memory-server')
+const MongoDB = require('mongodb-memory-server')
 
 module.exports = async function () {
-  globalThis.Mongod   = await MongoDB.MongoMemoryServer.create({instance: {port: 27017}})
+  if (!process.env.CI) globalThis.Mongod = await MongoDB.MongoMemoryServer.create({instance: {port: 27017}})
 }
