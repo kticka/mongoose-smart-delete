@@ -11,7 +11,7 @@ describe('SoftDelete - deletedAt field', () => {
     const Document = await Model.create({})
     const Actor    = await User.create({})
 
-    await Document.deleteOne({deleteBy: Actor})
+    await Document.deleteOne({deletedBy: Actor})
     const Deleted = await Model.findOne({_id: Document._id}).withDeleted()
     expect(Deleted.deleted).toBe(true)
     expect(Deleted.deletedBy).toEqual(Actor._id)
@@ -31,7 +31,7 @@ describe('SoftDelete - deletedAt field', () => {
     const Document = await Model.create({})
     const Actor    = await User.create({})
 
-    await Document.deleteOne({deleteBy: Actor})
+    await Document.deleteOne({deletedBy: Actor})
     const Deleted = await Model.findOne({_id: Document._id}).withDeleted()
     expect(Deleted.deleted).toBe(true)
     expect(Deleted.deletedBy).toBeUndefined()

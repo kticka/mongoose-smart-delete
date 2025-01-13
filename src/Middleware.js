@@ -35,7 +35,7 @@ module.exports = function (schema, config) {
       }
       if (config.deletedAt) update.$set[config.deletedAt.field] = new Date()
       if (config.deletedBy) {
-        update.$set[config.deletedBy.field] = this.getOptions().deleteBy
+        update.$set[config.deletedBy.field] = this.getOptions().deletedBy
       }
       this.setUpdate(update)
     }
