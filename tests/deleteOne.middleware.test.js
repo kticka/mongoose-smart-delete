@@ -11,8 +11,9 @@ describe('SoftDelete - deleteOne middleware', () => {
       next()
     })
 
-    Schema.post('deleteOne', {document: true, query: true}, function () {
+    Schema.post('deleteOne', {document: true, query: true}, function (doc, next) {
       TriggeredHooks.postDeleteOne = true
+      next()
     })
 
     Schema.pre('updateOne', {document: true, query: true}, function (next) {

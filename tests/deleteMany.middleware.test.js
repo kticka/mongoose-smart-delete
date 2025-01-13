@@ -6,14 +6,23 @@ describe('SoftDelete - deleteMany middleware', () => {
 
   beforeAll(async () => {
     const Schema = Mongoose.Schema({})
-    Schema.pre('deleteMany', {document: true, query: false}, function (next) {
+    Schema.pre('deleteMany', function (next) {
       TriggeredHooks.preDeleteMany = true
       next()
     })
 
-    Schema.post('deleteMany', {document: true, query: false}, function (doc, next) {
+    Schema.post('deleteMany', function (doc, next) {
       TriggeredHooks.postDeleteMany = true
       next()
+    })
+
+    Schema.pre('updateMany', function (next) {
+      TriggeredHooks.preUpdateMany = true
+      next()
+    })
+
+    Schema.post('updateMany', function () {
+      TriggeredHooks.postUpdateMany = true
     })
 
     Model = createModel(Schema)

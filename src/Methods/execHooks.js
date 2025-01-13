@@ -6,9 +6,8 @@ module.exports = async function (hook, query) {
   await schema.s.hooks.execPre(hook, this, [this, true], err => {
     if (err) throw err
   })
-
+  // console.log(query.schema.s.hooks._pres.get('find'))
   const result = await query
-
   await schema.s.hooks.execPost(hook, this, [this], err => {
     if (err) throw err
   })
