@@ -1,8 +1,8 @@
-# Mongoose Soft Delete
+# Mongoose Smart Delete
 
-[![Node.js CI](https://github.com/kticka/mongoose-soft-delete/actions/workflows/test.yml/badge.svg)](https://github.com/kticka/mongoose-soft-delete/actions/workflows/test.yml)
+[![Node.js CI](https://github.com/kticka/mongoose-smart-delete/actions/workflows/test.yml/badge.svg)](https://github.com/kticka/mongoose-smart-delete/actions/workflows/test.yml)
 
-The mongoose-soft-delete plugin seamlessly integrates soft delete functionality into your Mongoose models by overriding default methods like deleteOne, deleteMany, and findOneAndDelete. It also extends query methods such as find, findOne, and more, ensuring compatibility with your existing system without requiring changes to your code. When applied to a model, default delete operations automatically perform soft deletes, providing a smooth transition to using the plugin.
+The mongoose-smart-delete plugin seamlessly integrates soft delete functionality into your Mongoose models by overriding default methods like deleteOne, deleteMany, and findOneAndDelete. It also extends query methods such as find, findOne, and more, ensuring compatibility with your existing system without requiring changes to your code. When applied to a model, default delete operations automatically perform soft deletes, providing a smooth transition to using the plugin.
 
 This plugin leverages the same Mongoose hooks (pre and post) for delete operations like deleteOne and deleteMany, making it easy to retain existing behaviors. Additionally, it introduces custom hooks like restoreOne and restoreMany for handling restore operations.
 
@@ -41,7 +41,7 @@ Highly customizable, the plugin allows you to define custom field names for prop
 Install the package using npm:
 
 ```
-npm install mongoose-soft-delete
+npm install mongoose-smart-delete
 ```
 
 ## Usage
@@ -50,7 +50,7 @@ Import the package and apply it as a plugin to your schema:
 
 ```javascript
 const Mongoose           = require('mongoose')
-const MongooseSoftDelete = require('mongoose-soft-delete')
+const MongooseSoftDelete = require('mongoose-smart-delete')
 
 const Schema = new Mongoose.Schema({})
 Schema.plugin(MongooseSoftDelete)
@@ -107,7 +107,7 @@ Example:
 
 ```javascript
 const Mongoose           = require('mongoose')
-const MongooseSoftDelete = require('mongoose-soft-delete')
+const MongooseSoftDelete = require('mongoose-smart-delete')
 
 const UserSchema     = new Mongoose.Schema({})
 const DocumentSchema = new Mongoose.Schema({})
@@ -246,7 +246,7 @@ Real life example with custom attribute:
 // Update batchId field when soft deleting
 
 const Mongoose           = require('mongoose')
-const MongooseSoftDelete = require('mongoose-soft-delete')
+const MongooseSoftDelete = require('mongoose-smart-delete')
 
 const Schema = new Mongoose.Schema({
   batchId: String

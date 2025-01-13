@@ -1,5 +1,5 @@
 {
-  "name": "mongoose-soft-delete",
+  "name": "mongoose-smart-delete",
   "version": "1.0.0",
   "description": "A Mongoose plugin for implementing soft delete functionality, allowing documents to be marked as deleted without being removed from the database.",
   "main": "src/index.js",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kticka/mongoose-soft-delete.git"
+    "url": "git+https://github.com/kticka/mongoose-smart-delete.git"
   },
   "keywords": [
     "mongoose",
@@ -35,7 +35,7 @@
     "recover deleted records"
   ],
   "bugs": {
-    "url": "https://github.com/kticka/mongoose-soft-delete/issues"
+    "url": "https://github.com/kticka/mongoose-smart-delete/issues"
   },
-  "homepage": "https://github.com/kticka/mongoose-soft-delete#readme"
+  "homepage": "https://github.com/kticka/mongoose-smart-delete#readme"
 }
