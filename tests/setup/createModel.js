@@ -1,6 +1,7 @@
-const Mongoose = require('mongoose')
+const Mongoose   = require('mongoose')
+const SoftDelete = require('../../src')
 
-module.exports = function (schema = {}, options = {}) {
+module.exports   = function (schema = {}, config = {}) {
 
   let Schema
 
@@ -10,7 +11,7 @@ module.exports = function (schema = {}, options = {}) {
     Schema = new Mongoose.Schema(schema)
   }
 
-  Schema.plugin(require('../../src'), options)
+  Schema.plugin(SoftDelete, config)
   const modelName = `TestModel_${new Mongoose.Types.ObjectId()}`
   return Mongoose.model(modelName, Schema)
 }

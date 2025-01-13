@@ -1,21 +1,25 @@
 const mongoose = require('mongoose')
-module.exports = function (schema, options = {}) {
-
-  options = Object.assign({
-    deletedAt: true,
-    deletedBy: false
-  }, options)
+module.exports = function (schema, config) {
 
   schema.add({
-    deleted: {
-      type:    Boolean
+    [config.deleted.field]: {
+      type: Boolean,
     }
   })
 
-  if (options.deletedAt) {
+  if (config.deletedAt) {
     schema.add({
-      deletedAt: {
+      [config.deletedAt.field]: {
         type: Date
+      }
+    })
+  }
+
+  if (config.deletedBy) {
+    schema.add({
+      [config.deletedBy.field]: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: config.deletedBy.ref
       }
     })
   }

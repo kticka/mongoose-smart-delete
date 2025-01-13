@@ -24,7 +24,7 @@ module.exports = async function (deleteOp, query = {}, options = {}) {
   }
 
   // Create empty update operation which later will be filled in middleware
-  const q = isDocument ? this.updateOne({}) : context[updateOp](query, {})
+  const q = isDocument ? this.updateOne({}, options) : context[updateOp](query, options)
 
   // Remove soft delete flag after the operation is executed and all hooks are called
   q.post(function () {

@@ -13,15 +13,15 @@ const queries = [
 module.exports = function (schema, config) {
   schema.pre(queries, function (next) {
     if (!this.options?.withDeleted) {
-      this.where({deleted: {$ne: true}})
+      this.where({[config.deleted.field]: {$ne: true}})
     }
     next()
   })
 
   schema.pre('aggregate', function (next) {
     if (!this.options?.withDeleted) {
-      if (!this.pipeline().some(stage => stage.$match?.deleted !== undefined)) {
-        this.pipeline().unshift({$match: {deleted: {$ne: true}}})
+      if (!this.pipeline().some(stage => stage.$match?.[config.deleted.field] !== undefined)) {
+        this.pipeline().unshift({$match: {[config.deleted.field]: {$ne: true}}})
       }
     }
     next()
@@ -31,11 +31,13 @@ module.exports = function (schema, config) {
     if (this.$isSoftDelete) {
       const update = this.getUpdate()
       update.$set  = {
-        deleted: true
+        [config.deleted.field]: true
       }
-      if (config.deletedAt) update.$set.deletedAt = new Date()
+      if (config.deletedAt) update.$set[config.deletedAt.field] = new Date()
+      if (config.deletedBy) {
+        update.$set[config.deletedBy.field] = this.getOptions().deleteBy
+      }
       this.setUpdate(update)
-      console.log(update)
     }
     next()
   })
@@ -44,11 +46,13 @@ module.exports = function (schema, config) {
     if (this.$isSoftDelete) {
       const update  = this.getUpdate()
       update.$unset = {
-        deleted:   true,
-        deletedAt: true,
+        [config.deleted.field]: true,
       }
+
+      if (config.deletedAt) update.$unset[config.deletedAt.field] = true
+      if (config.deletedBy) update.$unset[config.deletedBy.field] = true
+
       this.setUpdate(update)
-      console.log(update)
     }
     next()
   })

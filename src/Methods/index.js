@@ -6,6 +6,7 @@ const softDelete = require('./softDelete')
 mongoose.Aggregate.prototype.withDeleted = withDeleted
 
 module.exports = function (schema) {
+
   schema.method('deleteOne', function (options) {
     return softDelete.call(this, 'deleteOne', {}, options)
   })
