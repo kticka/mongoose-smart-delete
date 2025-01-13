@@ -4,7 +4,9 @@ const Kareem   = require('kareem')
 const operations = {
   deleteOne:        'updateOne',
   deleteMany:       'updateMany',
-  findOneAndDelete: 'findOneAndUpdate'
+  findOneAndDelete: 'findOneAndUpdate',
+  restoreOne:       'updateOne',
+  restoreMany:      'updateMany'
 }
 
 module.exports = async function (deleteOp, query = {}, options = {}) {
@@ -21,10 +23,11 @@ module.exports = async function (deleteOp, query = {}, options = {}) {
     return Mongoose.Model[deleteOp].call(context, query, options)
   }
 
-  const q = isDocument ? this.updateOne({$set: {deleted: true}}) : context[updateOp](query, {$set: {deleted: true}})
+  // Create empty update operation which later will be filled in middleware
+  const q = isDocument ? this.updateOne({}) : context[updateOp](query, {})
 
   // Remove soft delete flag after the operation is executed and all hooks are called
-  q.post(function() {
+  q.post(function () {
     delete this.$isSoftDelete
     delete q.$isSoftDelete
   })

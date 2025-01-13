@@ -10,7 +10,7 @@ const queries = [
   'countDocuments'
 ]
 
-module.exports = function (schema) {
+module.exports = function (schema, config) {
   schema.pre(queries, function (next) {
     if (!this.options?.withDeleted) {
       this.where({deleted: {$ne: true}})
@@ -26,4 +26,32 @@ module.exports = function (schema) {
     }
     next()
   })
+
+  schema.pre(['deleteOne', 'deleteMany', 'findOneAndDelete'], {document: false, query: true}, function (next) {
+    if (this.$isSoftDelete) {
+      const update = this.getUpdate()
+      update.$set  = {
+        deleted: true
+      }
+      if (config.deletedAt) update.$set.deletedAt = new Date()
+      this.setUpdate(update)
+      console.log(update)
+    }
+    next()
+  })
+
+  schema.pre(['restoreOne', 'restoreMany'], {document: false, query: true}, function (next) {
+    if (this.$isSoftDelete) {
+      const update  = this.getUpdate()
+      update.$unset = {
+        deleted:   true,
+        deletedAt: true,
+      }
+      this.setUpdate(update)
+      console.log(update)
+    }
+    next()
+  })
+
+
 }

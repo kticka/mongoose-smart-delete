@@ -8,8 +8,7 @@ module.exports = function (schema, options = {}) {
 
   schema.add({
     deleted: {
-      type:    Boolean,
-      default: false
+      type:    Boolean
     }
   })
 
@@ -17,15 +16,6 @@ module.exports = function (schema, options = {}) {
     schema.add({
       deletedAt: {
         type: Date
-      }
-    })
-  }
-
-  if (options.deletedBy) {
-    schema.add({
-      deletedBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:  options.deletedBy
       }
     })
   }

@@ -6,7 +6,7 @@ module.exports = function (schema, options = {}) {
 
   options = Object.assign({
     deletedAt: true,
-    deletedBy: false
+    deletedBy: true
   }, options)
 
   Schema(schema, options)

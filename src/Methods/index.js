@@ -1,7 +1,5 @@
-const mongoose         = require('mongoose')
-const restoreOne       = require('./restoreOne')
-const restoreMany      = require('./restoreMany')
-const withDeleted      = require('./withDeleted')
+const mongoose    = require('mongoose')
+const withDeleted = require('./withDeleted')
 
 const softDelete = require('./softDelete')
 
@@ -24,9 +22,17 @@ module.exports = function (schema) {
     return softDelete.call(this, 'findOneAndDelete', query, options)
   })
 
-  schema.method('restoreOne', restoreOne)
-  schema.static('restoreOne', restoreOne)
-  schema.static('restoreMany', restoreMany)
+  schema.method('restoreOne', function (options) {
+    return softDelete.call(this, 'restoreOne', options)
+  })
+
+  schema.static('restoreOne', function (options) {
+    return softDelete.call(this, 'restoreOne', options)
+  })
+
+  schema.static('restoreMany', function (options) {
+    return softDelete.call(this, 'restoreMany', options)
+  })
 
   schema.query.withDeleted = withDeleted
 }
