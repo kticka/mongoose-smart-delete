@@ -26,7 +26,13 @@
     "mongoose",
     "softdelete",
     "mongoose plugin",
-    "mongoose soft delete"
+    "mongoose soft delete",
+    "soft delete",
+    "mongodb soft delete",
+    "logical delete",
+    "nodejs mongoose plugin",
+    "data retention",
+    "recover deleted records"
   ],
   "bugs": {
     "url": "https://github.com/kticka/mongoose-soft-delete/issues"
