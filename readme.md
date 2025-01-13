@@ -178,15 +178,17 @@ Use hooks to execute code before or after a delete operation. You can use `this.
 
 #### deleteOne Hooks
 
+Document-level hooks:
+
 ```javascript
-schema.pre('deleteOne', function (next) {
-  if (this.isSoftDelete()) {
+schema.pre('deleteOne', {document: true, query: false}, function (next, options) {
+  if (options.softDelete) {
     // Code for soft delete
   } else {
     // Code for hard delete
   }
-  next();
-});
+  next()
+})
 
 schema.post('deleteOne', function () {
   if (this.isSoftDelete()) {
@@ -194,13 +196,35 @@ schema.post('deleteOne', function () {
   } else {
     // Code for hard delete
   }
-});
+})
 ```
+
+Query-level hooks:
+
+```javascript
+schema.pre('deleteOne', {query: true}, function (next) {
+  if (this.getOptions().softDelete) {
+    // Code for soft delete
+  } else {
+    // Code for hard delete
+  }
+  next()
+})
+
+schema.post('deleteOne', {query: true}, function (next) {
+  if (this.getOptions().softDelete) {
+    // Code for soft delete
+  } else {
+    // Code for hard delete
+  }
+})
+```
+
 #### deleteMany Hooks
 
 ```javascript
 schema.pre('deleteMany', function (next) {
-  if (this.isSoftDelete()) {
+  if (this.getOptions().softDelete) {
     // Code for soft delete
   } else {
     // Code for hard delete
@@ -209,7 +233,7 @@ schema.pre('deleteMany', function (next) {
 });
 
 schema.post('deleteMany', function () {
-  if (this.isSoftDelete()) {
+  if (this.getOptions().softDelete) {
     // Code for soft delete
   } else {
     // Code for hard delete
@@ -231,8 +255,9 @@ const Schema = new Mongoose.Schema({
 Schema.plugin(MongooseSoftDelete)
 
 Schema.pre(['deleteOne', 'deleteMany'], {document: false, query: true}, function (next) {
-  if (this.isSoftDelete()) {
-    const options = this.getOptions()
+  const options = this.getOptions()
+
+  if (options.softDelete) {
     if (options.batchId) {
       const update        = this.getUpdate()
       update.$set.batchId = options.batchId
