@@ -28,7 +28,7 @@ module.exports = function (schema, config) {
   })
 
   schema.pre(['deleteOne', 'deleteMany', 'findOneAndDelete'], {document: false, query: true}, function (next) {
-    if (this.$isSoftDelete) {
+    if (this.getOptions().softDelete !== false) {
       const update = this.getUpdate()
       update.$set  = {
         [config.deleted.field]: true
@@ -43,7 +43,7 @@ module.exports = function (schema, config) {
   })
 
   schema.pre(['restoreOne', 'restoreMany'], {document: false, query: true}, function (next) {
-    if (this.$isSoftDelete) {
+    if (this.getOptions().softDelete !== false) {
       const update  = this.getUpdate()
       update.$unset = {
         [config.deleted.field]: true,

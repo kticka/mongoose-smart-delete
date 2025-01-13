@@ -20,31 +20,38 @@ module.exports = async function (deleteOp, query = {}, options = {}) {
 
   if (options.softDelete === false) {
     // Perform a hard delete if softDelete is explicitly disabled
+    options.callOriginalMethod = true
     return Mongoose.Model[deleteOp].call(context, query, options)
   }
 
+  options.softDelete = true
+
   // Create empty update operation which later will be filled in middleware
-  const q = isDocument ? this.updateOne({}, options) : context[updateOp](query, options)
+  const q = isDocument ? this.updateOne(options) : context[updateOp](query, {})
+  q.setOptions(options)
 
-  // Remove soft delete flag after the operation is executed and all hooks are called
-  q.post(function () {
-    delete this.$isSoftDelete
-    delete q.$isSoftDelete
-  })
-
-  // Move delete hooks to update hooks so they are executed automatically
-  if (isDocument) {
-    const modelMiddleware = new Kareem()
-    if (this.constructor._middleware._pres?.has(deleteOp)) modelMiddleware._pres.set(updateOp, this.constructor._middleware._pres.get(deleteOp))
-    if (this.constructor._middleware._posts?.has(deleteOp)) modelMiddleware._posts.set(updateOp, this.constructor._middleware._posts.get(deleteOp))
-    this.constructor._middleware = modelMiddleware
-    this.$isSoftDelete           = true
-  }
-
+  // Move query level hooks so they are executed automatically
   const queryMiddleware = new Kareem()
+
   if (q._queryMiddleware._pres?.has(deleteOp)) queryMiddleware._pres.set(updateOp, q._queryMiddleware._pres.get(deleteOp))
   if (q._queryMiddleware._posts?.has(deleteOp)) queryMiddleware._posts.set(updateOp, q._queryMiddleware._posts.get(deleteOp))
+
   q._queryMiddleware = queryMiddleware
-  q.$isSoftDelete    = true
+
+  if (isDocument) {
+    // Replace document updateOne hooks with <deleteOp> hooks
+    q._hooks._pres.set('exec', [])
+    q._hooks._posts.set('exec', [])
+
+    const self = this
+    q.pre(function queryPreSoftDeleteUpdateOne(cb) {
+      self.constructor._middleware.execPre(deleteOp, self, [options], cb)
+    })
+
+    q.post(function queryPostSoftDeleteUpdateOne(cb) {
+      self.constructor._middleware.execPost(deleteOp, self, [options], {}, cb)
+    })
+  }
+
   return q
 }
