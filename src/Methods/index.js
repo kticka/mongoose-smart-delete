@@ -45,13 +45,13 @@ mongoose.Document.prototype.restoreOne = function (options = {}) {
   return softDelete.call(this, 'restoreOne', {}, options)
 }
 
-mongoose.Document.prototype.deleteOne = function (options = {}) {
-  return softDelete.call(this, 'deleteOne', {}, options)
-}
-
 mongoose.Aggregate.prototype.withDeleted = withDeleted
 
 module.exports = function (schema) {
   schema._useSoftDelete = true
   schema.query.withDeleted = withDeleted
+
+  schema.method('deleteOne', function (options = {}) {
+    return softDelete.call(this, 'deleteOne', {}, options)
+  })
 }
