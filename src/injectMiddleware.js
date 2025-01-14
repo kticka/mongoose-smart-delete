@@ -43,17 +43,15 @@ module.exports = function (schema, config) {
   })
 
   schema.pre(['restoreOne', 'restoreMany'], {document: false, query: true}, function (next) {
-    if (this.getOptions().softDelete !== false) {
-      const update  = this.getUpdate()
-      update.$unset = {
-        [config.deleted.field]: true,
-      }
-
-      if (config.deletedAt) update.$unset[config.deletedAt.field] = true
-      if (config.deletedBy) update.$unset[config.deletedBy.field] = true
-
-      this.setUpdate(update)
+    const update  = this.getUpdate()
+    update.$unset = {
+      [config.deleted.field]: true,
     }
+
+    if (config.deletedAt) update.$unset[config.deletedAt.field] = true
+    if (config.deletedBy) update.$unset[config.deletedBy.field] = true
+
+    this.setUpdate(update)
     next()
   })
 

@@ -2,7 +2,8 @@
 
 [![Node.js CI](https://github.com/kticka/mongoose-smart-delete/actions/workflows/test.yml/badge.svg)](https://github.com/kticka/mongoose-smart-delete/actions/workflows/test.yml)
 
-The mongoose-smart-delete plugin seamlessly integrates soft delete functionality into your Mongoose models by overriding default methods like deleteOne, deleteMany, and findOneAndDelete. It also extends query methods such as find, findOne, and more, ensuring compatibility with your existing system without requiring changes to your code. When applied to a model, default delete operations automatically perform soft deletes, providing a smooth transition to using the plugin.
+The mongoose-smart-delete plugin seamlessly integrates soft delete functionality into your Mongoose models by overriding default methods like deleteOne, deleteMany, and findOneAndDelete. It also extends query methods such as find, findOne, and more, ensuring compatibility with your existing system
+without requiring changes to your code. When applied to a model, default delete operations automatically perform soft deletes, providing a smooth transition to using the plugin.
 
 This plugin leverages the same Mongoose hooks (pre and post) for delete operations like deleteOne and deleteMany, making it easy to retain existing behaviors. Additionally, it introduces custom hooks like restoreOne and restoreMany for handling restore operations.
 
@@ -12,29 +13,29 @@ Highly customizable, the plugin allows you to define custom field names for prop
 
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Options](#options)
-    - [deleted](#deleted)
-    - [deletedAt](#deletedat)
-    - [deletedBy](#deletedby)
+    - [Options](#options)
+        - [deleted](#deleted-optional)
+        - [deletedAt](#deletedat-optional)
+        - [deletedBy](#deletedby-optional)
 - [Delete](#delete)
-  - [Document.deleteOne()](#documentdeleteone)
-  - [Model.deleteOne()](#modeldeleteone)
-  - [Model.deleteMany()](#modeldeletemany)
-  - [Delete Hooks](#delete-hooks)
+    - [Document.deleteOne()](#documentdeleteone)
+    - [Model.deleteOne()](#modeldeleteone)
+    - [Model.deleteMany()](#modeldeletemany)
+    - [Delete Hooks](#delete-hooks)
 - [Restore](#restore)
-  - [Document.restoreOne()](#documentrestoreone)
-  - [Model.restoreOne()](#modelrestoreone)
-  - [Model.restoreMany()](#modelrestoremany)
-  - [Restore Hooks](#restore-hooks)
+    - [Document.restoreOne()](#documentrestoreone)
+    - [Model.restoreOne()](#modelrestoreone)
+    - [Model.restoreMany()](#modelrestoremany)
+    - [Restore Hooks](#restore-hooks)
 - [Queries](#queries)
-  - [Model.find()](#modelfind)
-  - [Model.findOne()](#modelfindone)
-  - [Model.findOneAndUpdate()](#modelfindoneandupdate)
-  - [Model.findOneAndReplace()](#modelfindoneandreplace)
-  - [Model.updateOne()](#modelupdateone)
-  - [Model.updateMany()](#modelupdatemany)
-  - [Model.replaceOne()](#modelreplaceone)
-  - [Model.countDocuments()](#modelcountdocuments)
+    - [Model.find()](#modelfind)
+    - [Model.findOne()](#modelfindone)
+    - [Model.findOneAndUpdate()](#modelfindoneandupdate)
+    - [Model.findOneAndReplace()](#modelfindoneandreplace)
+    - [Model.updateOne()](#modelupdateone)
+    - [Model.updateMany()](#modelupdatemany)
+    - [Model.replaceOne()](#modelreplaceone)
+    - [Model.countDocuments()](#modelcountdocuments)
 
 ## Installation
 
@@ -49,11 +50,11 @@ npm install mongoose-smart-delete
 Import the package and apply it as a plugin to your schema:
 
 ```javascript
-const Mongoose           = require('mongoose')
-const MongooseSoftDelete = require('mongoose-smart-delete')
+const Mongoose            = require('mongoose')
+const MongooseSmartDelete = require('mongoose-smart-delete')
 
 const Schema = new Mongoose.Schema({})
-Schema.plugin(MongooseSoftDelete)
+Schema.plugin(MongooseSmartDelete)
 const Model = Mongoose.model('Model', Schema)
 
 const Document = await Model.create({})
@@ -106,13 +107,13 @@ Tracks the user who deleted the document.
 Example:
 
 ```javascript
-const Mongoose           = require('mongoose')
-const MongooseSoftDelete = require('mongoose-smart-delete')
+const Mongoose            = require('mongoose')
+const MongooseSmartDelete = require('mongoose-smart-delete')
 
 const UserSchema     = new Mongoose.Schema({})
 const DocumentSchema = new Mongoose.Schema({})
 
-DocumentSchema.plugin(MongooseSoftDelete, {
+DocumentSchema.plugin(MongooseSmartDelete, {
   deletedBy: {
     ref: 'User',
   },
@@ -141,7 +142,7 @@ Document.deleteOne();
 Hard delete a document instance:
 
 ```javascript
-Document.deleteOne({ softDelete: false });
+Document.deleteOne({softDelete: false});
 ```
 
 ### Model.deleteOne()
@@ -155,7 +156,7 @@ Model.deleteOne(query);
 Hard delete a single document:
 
 ```javascript
-Model.deleteOne(query, { softDelete: false });
+Model.deleteOne(query, {softDelete: false});
 ```
 
 ### Model.deleteMany()
@@ -169,7 +170,7 @@ Model.deleteMany(query);
 Hard delete multiple documents:
 
 ```javascript
-Model.deleteMany(query, { softDelete: false });
+Model.deleteMany(query, {softDelete: false});
 ```
 
 ### Delete Hooks
@@ -242,17 +243,18 @@ schema.post('deleteMany', function () {
 ```
 
 Real life example with custom attribute:
+
 ```javascript
 // Update batchId field when soft deleting
 
-const Mongoose           = require('mongoose')
-const MongooseSoftDelete = require('mongoose-smart-delete')
+const Mongoose            = require('mongoose')
+const MongooseSmartDelete = require('mongoose-smart-delete')
 
 const Schema = new Mongoose.Schema({
   batchId: String
 })
 
-Schema.plugin(MongooseSoftDelete)
+Schema.plugin(MongooseSmartDelete)
 
 Schema.pre(['deleteOne', 'deleteMany'], {document: false, query: true}, function (next) {
   const options = this.getOptions()
@@ -394,11 +396,13 @@ The MIT License
 
 Copyright 2024 Karolis Tička https://github.com/kticka
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 

@@ -2,62 +2,122 @@ const Mongoose    = require('mongoose')
 const createModel = require('./setup/createModel')
 describe('SoftDelete - deleteOne middleware', () => {
 
-  let Model, Document, TriggeredHooks = {}
+  function setupHook(type, hook, options) {
+    Schema[type](hook, options, function (v1, v2) {
+      TriggeredHooks[type].push({
+        hook:      hook,
+        context:   this,
+        arguments: arguments
+      })
 
-  beforeAll(async () => {
-    const Schema = Mongoose.Schema({})
-    Schema.pre('deleteOne', {document: true, query: true}, function (next) {
-      TriggeredHooks.preDeleteOne = true
-      next()
+      return type === 'pre' ? v1() : v2()
     })
+  }
 
-    Schema.post('deleteOne', {document: true, query: true}, function (doc, next) {
-      TriggeredHooks.postDeleteOne = true
-      next()
-    })
-
-    Schema.pre('updateOne', {document: true, query: true}, function (next) {
-      TriggeredHooks.preUpdateOne = true
-      next()
-    })
-
-    Schema.post('updateOne', {document: true, query: true}, function () {
-      TriggeredHooks.postUpdateOne = true
-    })
-
-    Model = createModel(Schema)
-  })
+  let Schema, TriggeredHooks
 
   beforeEach(async () => {
-    Document = await Model.create({name: 'TestDocument'})
+    Schema         = new Mongoose.Schema({})
+    TriggeredHooks = {
+      pre:  [],
+      post: []
+    }
   })
 
-  afterEach(async () => {
-    TriggeredHooks = {}
-    await Model.deleteMany({}, {softDelete: false})
-  })
-
-  it('Document.deleteOne should trigger pre hook', async () => {
+  it('Should trigger document-level pre("deleteOne") hook in document context.', async () => {
+    setupHook('pre', 'deleteOne', {document: true, query: false})
+    const Model    = createModel(Schema)
+    const Document = await Model.create({})
     await Document.deleteOne()
-    expect(TriggeredHooks.preDeleteOne).toBe(true)
-    expect(TriggeredHooks.preUpdateOne).not.toBe(true)
+    expect(TriggeredHooks.pre.length).toBe(1)
+    expect(TriggeredHooks.pre[0].hook).toBe('deleteOne')
+    expect(TriggeredHooks.pre[0].context).toEqual(Document)
+    expect(TriggeredHooks.pre[0].arguments[1].softDelete).toBe(true)
   })
 
-  it('Document.deleteOne should trigger post hook', async () => {
-    await Document.deleteOne()
-    expect(TriggeredHooks.postDeleteOne).toBe(true)
-    expect(TriggeredHooks.postUpdateOne).not.toBe(true)
+  it('Should trigger document-level post("deleteOne") hook in document context.', async () => {
+    setupHook('post', 'deleteOne', {document: true, query: false})
+    const Model    = createModel(Schema)
+    const Document = await Model.create({})
+    await Document.deleteOne({})
+    expect(TriggeredHooks.post.length).toBe(1)
+    expect(TriggeredHooks.post[0].hook).toBe('deleteOne')
+    expect(TriggeredHooks.post[0].context).toEqual(Document)
+    expect(TriggeredHooks.post[0].arguments[0].softDelete).toBe(true)
   })
 
-  it('Model.deleteOne should trigger pre and pre hook', async () => {
-    await Model.deleteOne({_id: Document._id})
-    expect(TriggeredHooks.preDeleteOne).toBe(true)
-    expect(TriggeredHooks.preUpdateOne).not.toBe(true)
+  it('Should trigger query-level pre("deleteOne") hook in document context.', async () => {
+    setupHook('pre', 'deleteOne', {document: false, query: true})
+    const Model    = createModel(Schema)
+    const Document = await Model.create({})
+    await Document.deleteOne({})
+    expect(TriggeredHooks.pre.length).toBe(1)
+    expect(TriggeredHooks.pre[0].hook).toBe('deleteOne')
+    expect(TriggeredHooks.pre[0].context).toBeInstanceOf(Mongoose.Query)
+    expect(TriggeredHooks.pre[0].context.getOptions().softDelete).toBe(true)
   })
 
-  it('Model.deleteOne should trigger pre and post hook', async () => {
-    await Model.deleteOne({_id: Document._id})
-    expect(TriggeredHooks.postDeleteOne).toBe(true)
-    expect(TriggeredHooks.postUpdateOne).not.toBe(true)
+  it('Should trigger query-level post("deleteOne") hook in document context.', async () => {
+    setupHook('post', 'deleteOne', {document: false, query: true})
+    const Model    = createModel(Schema)
+    const Document = await Model.create({})
+    await Document.deleteOne({})
+    expect(TriggeredHooks.post.length).toBe(1)
+    expect(TriggeredHooks.post[0].hook).toBe('deleteOne')
+    expect(TriggeredHooks.post[0].context).toBeInstanceOf(Mongoose.Query)
+    expect(TriggeredHooks.post[0].context.getOptions().softDelete).toBe(true)
+  })
+
+  it('Should NOT trigger document-level pre("deleteOne") hook in query context.', async () => {
+    setupHook('pre', 'deleteOne', {document: true, query: true})
+    const Model = createModel(Schema)
+    await Model.deleteOne({})
+    expect(TriggeredHooks.pre.length).toBe(1)
+    expect(TriggeredHooks.pre[0].context).toBeInstanceOf(Mongoose.Query)
+  })
+
+  it('Should NOT trigger document-level post("deleteOne") hook in query context.', async () => {
+    setupHook('post', 'deleteOne', {document: true, query: true})
+    const Model = createModel(Schema)
+    await Model.deleteOne({})
+    expect(TriggeredHooks.post.length).toBe(1)
+    expect(TriggeredHooks.post[0].context).toBeInstanceOf(Mongoose.Query)
+  })
+
+  it('Should execute pre("deleteOne") hooks in the order: document-level first, then query-level.', async () => {
+    setupHook('pre', 'deleteOne', {document: true, query: true})
+    const Model    = createModel(Schema)
+    const Document = await Model.create({})
+    await Document.deleteOne({})
+    expect(TriggeredHooks.pre.length).toBe(2)
+    expect(TriggeredHooks.pre[0].context).toBeInstanceOf(Mongoose.Document)
+    expect(TriggeredHooks.pre[1].context).toBeInstanceOf(Mongoose.Query)
+  })
+
+  it('Should execute post("deleteOne") hooks in the order: query-level first, then document-level.', async () => {
+    setupHook('post', 'deleteOne', {document: true, query: true})
+    const Model    = createModel(Schema)
+    const Document = await Model.create({})
+    await Document.deleteOne({})
+    expect(TriggeredHooks.post.length).toBe(2)
+    expect(TriggeredHooks.post[1].context).toBeInstanceOf(Mongoose.Document)
+    expect(TriggeredHooks.post[0].context).toBeInstanceOf(Mongoose.Query)
+  })
+
+  it('Should NOT execute pre("updateOne") hooks in deleteOne operation.', async () => {
+    setupHook('pre', 'updateOne', {document: true, query: true})
+    const Model    = createModel(Schema)
+    const Document = await Model.create({})
+    await Document.deleteOne({})
+    expect(TriggeredHooks.pre.length).toBe(0)
+  })
+
+  it('Should NOT execute post("updateOne") hooks in deleteOne operation.', async () => {
+    setupHook('post', 'updateOne', {document: true, query: true})
+    const Model    = createModel(Schema)
+    const Document = await Model.create({})
+    await Document.deleteOne({})
+    expect(TriggeredHooks.post.length).toBe(0)
   })
 })
+

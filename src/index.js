@@ -1,6 +1,6 @@
-const Schema     = require('./Schema')
-const Methods    = require('./Methods')
-const Middleware = require('./Middleware')
+require('./injectMethods')
+const injectSchema     = require('./injectSchema')
+const injectMiddleware = require('./injectMiddleware')
 
 module.exports = function (schema, options = {}) {
 
@@ -24,7 +24,8 @@ module.exports = function (schema, options = {}) {
     config.deletedBy.ref   = options.deletedBy.ref
   }
 
-  Schema(schema, config)
-  Middleware(schema, config)
-  Methods(schema)
+  schema._smartDelete = true
+
+  injectSchema(schema, config)
+  injectMiddleware(schema, config)
 }
