@@ -3,7 +3,8 @@ module.exports = function (schema, config) {
 
   schema.add({
     [config.deleted.field]: {
-      type: Boolean,
+      type:  Boolean,
+      index: true
     }
   })
 
@@ -19,7 +20,8 @@ module.exports = function (schema, config) {
     schema.add({
       [config.deletedBy.field]: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: config.deletedBy.ref
+        ref:  config.deletedBy.ref,
+        index: true
       }
     })
   }
