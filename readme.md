@@ -203,8 +203,8 @@ schema.post('deleteOne', function (options, next) {
 })
 ```
 
-Query-level hooks:
-In document level hook, you can use `this.getOptions().softDelete` to determine if the operation is a soft delete or hard delete.
+Query-level hooks:\
+In query level hook, you can use `this.getOptions().softDelete` to determine if the operation is a soft delete or hard delete.
 ```javascript
 schema.pre('deleteOne', {query: true}, function (next) {
   if (this.getOptions().softDelete) {
