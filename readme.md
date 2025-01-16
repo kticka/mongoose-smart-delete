@@ -175,11 +175,14 @@ Model.deleteMany(query, {softDelete: false});
 
 ### Delete Hooks
 
-Use hooks to execute code before or after a delete operation. You can use `this.isSoftDelete()` to determine if the operation is a soft delete or hard delete.
+Use hooks to execute code before or after a delete operation.
 
 #### deleteOne Hooks
 
-Document-level hooks:
+Document-level hooks:\
+In document level hook, you can use `options.softDelete` to determine if the operation is a soft delete or hard delete.\
+In pre hook, options are passed as second argument. In post - as first.
+
 
 ```javascript
 schema.pre('deleteOne', {document: true, query: false}, function (next, options) {
@@ -191,8 +194,8 @@ schema.pre('deleteOne', {document: true, query: false}, function (next, options)
   next()
 })
 
-schema.post('deleteOne', function () {
-  if (this.isSoftDelete()) {
+schema.post('deleteOne', function (options, next) {
+  if (options.softDelete) {
     // Code for soft delete
   } else {
     // Code for hard delete
@@ -201,7 +204,7 @@ schema.post('deleteOne', function () {
 ```
 
 Query-level hooks:
-
+In document level hook, you can use `this.getOptions().softDelete` to determine if the operation is a soft delete or hard delete.
 ```javascript
 schema.pre('deleteOne', {query: true}, function (next) {
   if (this.getOptions().softDelete) {
@@ -212,12 +215,13 @@ schema.pre('deleteOne', {query: true}, function (next) {
   next()
 })
 
-schema.post('deleteOne', {query: true}, function (next) {
+schema.post('deleteOne', {query: true}, function (result, next) {
   if (this.getOptions().softDelete) {
     // Code for soft delete
   } else {
     // Code for hard delete
   }
+  next()
 })
 ```
 

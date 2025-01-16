@@ -16,7 +16,7 @@ class MongooseSmartDelete {
     }
     this._op       = 'deleteOne'
     this._updateOp = 'updateOne'
-    return this.query(query, options)
+    return this.query(query, {}, options)
   }
 
   documentDeleteOne(options = {}) {
