@@ -101,8 +101,8 @@ Schema.plugin(mongooseSoftDelete, {
 
 Tracks the user who deleted the document.
 
-- `deletedBy.field`: Sets the field name for the user reference.
-- `deletedBy.ref`: Sets the reference model for the user.
+- `deletedBy.field (optional)`: Sets the field name for the user reference.
+- `deletedBy.ref (required)`: Sets the reference model for the user.
 
 Example:
 
@@ -115,6 +115,7 @@ const DocumentSchema = new Mongoose.Schema({})
 
 DocumentSchema.plugin(MongooseSmartDelete, {
   deletedBy: {
+    field: 'deletedBy',
     ref: 'User',
   },
 })
@@ -398,7 +399,7 @@ Model.countDocuments({}).withDeleted();
 
 The MIT License
 
-Copyright 2024 Karolis Tička https://github.com/kticka
+Copyright 2025 Karolis Tička https://github.com/kticka
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
