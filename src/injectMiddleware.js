@@ -7,7 +7,10 @@ const queries = [
   'updateOne',
   'updateMany',
   'replaceOne',
-  'countDocuments'
+  'countDocuments',
+  'deleteOne',
+  'deleteMany',
+  'findOneAndDelete'
 ]
 
 module.exports = function (schema, config) {
