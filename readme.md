@@ -21,6 +21,8 @@ Highly customizable, the plugin allows you to define custom field names for prop
     - [Document.deleteOne()](#documentdeleteone)
     - [Model.deleteOne()](#modeldeleteone)
     - [Model.deleteMany()](#modeldeletemany)
+    - [Model.findOneAndDelete()](#modelfindoneanddelete)
+    - [Model.findByIdAndDelete()](#modelfindbyidanddelete)
     - [Delete Hooks](#delete-hooks)
 - [Restore](#restore)
     - [Document.restoreOne()](#documentrestoreone)
@@ -68,7 +70,7 @@ return Document.deleteOne()
 Sets the field name for the soft delete flag.
 
 ```javascript
-Schema.plugin(mongooseSoftDelete, {
+Schema.plugin(MongooseSmartDelete, {
   deleted: {
     field: 'deleted',
   },
@@ -82,7 +84,7 @@ Sets the field name for the deletion timestamp.
 - For default behavior:
 
 ```javascript
-Schema.plugin(mongooseSoftDelete, {
+Schema.plugin(MongooseSmartDelete, {
   deletedAt: true,
 });
 ```
@@ -90,7 +92,7 @@ Schema.plugin(mongooseSoftDelete, {
 - To specify a custom field:
 
 ```javascript
-Schema.plugin(mongooseSoftDelete, {
+Schema.plugin(MongooseSmartDelete, {
   deletedAt: {
     field: 'deletedAt',
   },
@@ -158,6 +160,29 @@ Hard delete a single document:
 
 ```javascript
 Model.deleteOne(query, {softDelete: false});
+```
+
+### Model.findOneAndDelete()
+
+Soft delete:
+```javascript
+Model.findOneAndDelete(query);
+```
+
+Hard delete:
+```javascript
+Model.findOneAndDelete(query, {softDelete: false});
+```
+
+### Model.findByIdAndDelete()
+Soft delete:
+```javascript
+Model.findByIdAndDelete(id);
+```
+
+Hard delete:
+```javascript
+Model.findByIdAndDelete(id, {softDelete: false});
 ```
 
 ### Model.deleteMany()
@@ -247,7 +272,7 @@ schema.post('deleteMany', function () {
 });
 ```
 
-Real life example with custom attribute:
+#### Real life example with custom `batchId` attribute:
 
 ```javascript
 // Update batchId field when soft deleting
