@@ -11,7 +11,7 @@ describe('SoftDelete - save', () => {
   })
 
   afterEach(async () => {
-    await Model.deleteMany({}, {softDelete: false})
+    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
   })
 
   it('Should save deleted document when it\'s already loaded to memory', async () => {

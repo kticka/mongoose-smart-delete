@@ -11,7 +11,7 @@ describe('SoftDelete - aggregate', () => {
   })
 
   afterEach(async () => {
-    await Model.deleteMany({}, {softDelete: false})
+    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
   })
 
   it('Should exclude deleted documents when "withDeleted" option is not used', async () => {

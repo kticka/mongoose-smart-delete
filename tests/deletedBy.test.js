@@ -1,9 +1,16 @@
 const createModel = require('./setup/createModel')
 describe('SoftDelete - deletedAt field', () => {
 
+  let Model, User
+
+  afterEach(async () => {
+    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
+    await User.deleteMany({}, {softDelete: false, withDeleted: true})
+  })
+
   it('Deleted document should have deletedBy attribute set to ObjectId when config.deletedBy is set', async () => {
-    const User     = createModel()
-    const Model    = createModel({}, {
+    User     = createModel()
+    Model    = createModel({}, {
       deletedBy: {
         ref: User.constructor.name
       }
@@ -20,8 +27,8 @@ describe('SoftDelete - deletedAt field', () => {
   it('Deleted document should have custom deletedBy attribute set to ObjectId when config.deletedBy is set', async () => {
     const deletedByField = 'removedBy'
 
-    const User     = createModel()
-    const Model    = createModel({}, {
+    User     = createModel()
+    Model    = createModel({}, {
       deletedBy: {
         field: deletedByField,
         ref:   User.constructor.name

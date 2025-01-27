@@ -13,7 +13,7 @@ describe('SoftDelete - restoreMany', () => {
   })
 
   afterEach(async () => {
-    await Model.deleteMany({}, {softDelete: false})
+    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
   })
 
   it('Should restore multiple documents', async () => {

@@ -1,8 +1,14 @@
 const createModel = require('./setup/createModel')
 describe('SoftDelete - deleted field', () => {
 
+  let Model
+
+  afterEach(async () => {
+    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
+  })
+
   it('Deleted document should have deleted field set to true when config.deleted.field is not provided', async () => {
-    const Model = createModel({})
+    Model = createModel({})
     const Document = await Model.create({})
     await Document.deleteOne()
     const Deleted = await Model.findOne({_id: Document._id}).withDeleted()
@@ -15,7 +21,7 @@ describe('SoftDelete - deleted field', () => {
 
     const deletedField = 'isDeleted'
 
-    const Model = createModel({}, {
+    Model = createModel({}, {
       deleted: {
         field: deletedField
       }

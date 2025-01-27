@@ -35,7 +35,7 @@ describe('SoftDelete - deleteMany middleware', () => {
 
   afterEach(async () => {
     TriggeredHooks = {}
-    await Model.deleteMany({}, {softDelete: false})
+    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
   })
 
   it('Model.deleteMany should trigger pre hook', async () => {

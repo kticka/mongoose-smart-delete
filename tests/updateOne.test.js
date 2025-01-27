@@ -11,7 +11,7 @@ describe('SoftDelete - updateOne', () => {
   })
 
   afterEach(async () => {
-    await Model.deleteMany({}, {softDelete: false})
+    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
   })
 
   it('Should not update deleted document', async () => {

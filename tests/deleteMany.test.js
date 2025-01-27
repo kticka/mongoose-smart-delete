@@ -12,7 +12,7 @@ describe('SoftDelete - deleteMany', () => {
   })
 
   afterEach(async () => {
-    await Model.deleteMany({}, {softDelete: false})
+    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
   })
 
   it('Should exclude soft-deleted documents from standard queries but include them when using withDeleted', async () => {

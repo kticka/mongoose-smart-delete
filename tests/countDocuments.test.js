@@ -11,7 +11,7 @@ describe('SoftDelete - countDocuments', () => {
   })
 
   afterEach(async () => {
-    await Model.deleteMany({}, {softDelete: false})
+    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
   })
 
   it('Should exclude deleted documents by default', async () => {

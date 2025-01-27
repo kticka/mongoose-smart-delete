@@ -1,8 +1,14 @@
 const createModel = require('./setup/createModel')
 describe('SoftDelete - deletedAt field', () => {
 
+  let Model
+
+  afterEach(async () => {
+    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
+  })
+
   it('Deleted document should not have set deletedAt config.deletedAt.field is not provided', async () => {
-    const Model    = createModel({})
+    Model    = createModel({})
     const Document = await Model.create({})
     await Document.deleteOne()
     const Deleted = await Model.findOne({_id: Document._id}).withDeleted()
@@ -14,7 +20,7 @@ describe('SoftDelete - deletedAt field', () => {
     const Model    = createModel({}, {
       deletedAt: true
     })
-    const Document = await Model.create({})
+    Document = await Model.create({})
     await Document.deleteOne()
     const Deleted = await Model.findOne({_id: Document._id}).withDeleted()
     expect(Deleted.deleted).toBe(true)
@@ -23,7 +29,7 @@ describe('SoftDelete - deletedAt field', () => {
 
   it('Deleted document should have custom deletedAt attribute set to date when config.deletedAt.field is provided', async () => {
     const deletedAtField = 'removedAt'
-    const Model          = createModel({}, {
+    Model          = createModel({}, {
       deletedAt: {
         field: deletedAtField
       }

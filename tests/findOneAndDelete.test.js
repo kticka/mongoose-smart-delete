@@ -11,7 +11,7 @@ describe('SoftDelete - findOneAndDelete', () => {
   })
 
   afterEach(async () => {
-    await Model.deleteMany({}, {softDelete: false})
+    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
   })
 
   it('Should not remove document from collection when option softDelete is set to true', async () => {
