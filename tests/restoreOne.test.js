@@ -1,29 +1,33 @@
 const createModel = require('./setup/createModel')
-describe('SoftDelete - deleteOne', () => {
-  let Model, Document
+const modes       = require('./setup/modes')
 
-  beforeAll(async () => {
-    Model = createModel({})
-  })
+modes.forEach((mode) => {
+  describe(`SoftDelete - deleteOne (mode: ${mode})`, () => {
+    let Model, Document
 
-  beforeEach(async () => {
-    Document = await Model.create({})
-    await Document.deleteOne()
-  })
+    beforeAll(async () => {
+      Model = createModel({}, {mode: mode})
+    })
 
-  afterEach(async () => {
-    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
-  })
+    beforeEach(async () => {
+      Document = await Model.create({})
+      await Document.deleteOne()
+    })
 
-  it('Document.restoreOne should restore Document', async () => {
-    expect(await Model.findOne({})).toBeNull()
-    await Document.restoreOne()
-    expect((await Model.findOne({}))._id).toEqual(Document._id)
-  })
+    afterEach(async () => {
+      await Model.deleteMany({}, {softDelete: false, withDeleted: true})
+    })
 
-  it('Model.restoreOne should restore Document', async () => {
-    expect(await Model.findOne({})).toBeNull()
-    await Model.restoreOne({_id: Document._id})
-    expect((await Model.findOne({}))._id).toEqual(Document._id)
+    it('Document.restoreOne should restore Document', async () => {
+      expect(await Model.findOne({})).toBeNull()
+      await Document.restoreOne()
+      expect((await Model.findOne({}))._id).toEqual(Document._id)
+    })
+
+    it('Model.restoreOne should restore Document', async () => {
+      expect(await Model.findOne({})).toBeNull()
+      await Model.restoreOne({_id: Document._id})
+      expect((await Model.findOne({}))._id).toEqual(Document._id)
+    })
   })
 })

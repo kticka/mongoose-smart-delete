@@ -1,24 +1,28 @@
 const createModel = require('./setup/createModel')
-describe('SoftDelete - restoreMany', () => {
-  let Model
+const modes       = require('./setup/modes')
 
-  beforeAll(async () => {
-    Model = createModel({num: Number})
-  })
+modes.forEach((mode) => {
+  describe(`SoftDelete - restoreMany (mode: ${mode})`, () => {
+    let Model
 
-  beforeEach(async () => {
-    const objects = Array.from({length: 5}, (_, index) => ({num: index + 1}))
-    await Model.insertMany(objects)
-    await Model.deleteMany({num: {$lte: 3}})
-  })
+    beforeAll(async () => {
+      Model = createModel({num: Number}, {mode: mode})
+    })
 
-  afterEach(async () => {
-    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
-  })
+    beforeEach(async () => {
+      const objects = Array.from({length: 5}, (_, index) => ({num: index + 1}))
+      await Model.insertMany(objects)
+      await Model.deleteMany({num: {$lte: 3}})
+    })
 
-  it('Should restore multiple documents', async () => {
-    expect((await Model.find({})).map(obj => obj.num)).toEqual([4, 5])
-    await Model.restoreMany({num: {$lte: 2}})
-    expect((await Model.find({})).map(obj => obj.num)).toEqual([1, 2, 4, 5])
+    afterEach(async () => {
+      await Model.deleteMany({}, {softDelete: false, withDeleted: true})
+    })
+
+    it('Should restore multiple documents', async () => {
+      expect((await Model.find({})).map(obj => obj.num)).toEqual([4, 5])
+      await Model.restoreMany({num: {$lte: 2}})
+      expect((await Model.find({})).map(obj => obj.num)).toEqual([1, 2, 4, 5])
+    })
   })
 })

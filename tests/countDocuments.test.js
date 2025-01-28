@@ -1,31 +1,35 @@
 const createModel = require('./setup/createModel')
-describe('SoftDelete - countDocuments', () => {
-  let Model
+const modes       = require('./setup/modes')
 
-  beforeAll(async () => {
-    Model = createModel()
-  })
+modes.forEach((mode) => {
+  describe('SoftDelete - countDocuments', () => {
+    let Model
 
-  beforeEach(async () => {
-    await Model.insertMany([{}, {}])
-  })
+    beforeAll(async () => {
+      Model = createModel({}, {mode: mode})
+    })
 
-  afterEach(async () => {
-    await Model.deleteMany({}, {softDelete: false, withDeleted: true})
-  })
+    beforeEach(async () => {
+      await Model.insertMany([{}, {}])
+    })
 
-  it('Should exclude deleted documents by default', async () => {
-    await Model.deleteOne()
-    expect(await Model.countDocuments()).toBe(1)
-  })
+    afterEach(async () => {
+      await Model.deleteMany({}, {softDelete: false, withDeleted: true})
+    })
 
-  it('Should include deleted documents when using withDeleted option', async () => {
-    await Model.deleteOne()
-    expect(await Model.countDocuments({}, {withDeleted: true})).toBe(2)
-  })
+    it('Should exclude deleted documents by default', async () => {
+      await Model.deleteOne()
+      expect(await Model.countDocuments()).toBe(1)
+    })
 
-  it('Should include deleted documents when chaining withDeleted(true)', async () => {
-    await Model.deleteOne()
-    expect(await Model.countDocuments({}).withDeleted(true)).toBe(2)
+    it('Should include deleted documents when using withDeleted option', async () => {
+      await Model.deleteOne()
+      expect(await Model.countDocuments({}, {withDeleted: true})).toBe(2)
+    })
+
+    it('Should include deleted documents when chaining withDeleted(true)', async () => {
+      await Model.deleteOne()
+      expect(await Model.countDocuments({}).withDeleted(true)).toBe(2)
+    })
   })
 })
