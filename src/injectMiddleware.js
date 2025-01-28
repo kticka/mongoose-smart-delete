@@ -13,10 +13,20 @@ const queries = [
   'findOneAndDelete'
 ]
 
+function getWhereConditions(config) {
+  const field = config.deleted.field
+  switch (config.mode) {
+    case 'strict':
+      return {[field]: false}
+    default:
+      return {[field]: {$ne: true}}
+  }
+}
+
 module.exports = function (schema, config) {
   schema.pre(queries, function (next) {
     if (!this.options?.withDeleted) {
-      this.where({[config.deleted.field]: {$ne: true}})
+      this.where(getWhereConditions(config))
     }
     next()
   })
@@ -24,7 +34,7 @@ module.exports = function (schema, config) {
   schema.pre('aggregate', function (next) {
     if (!this.options?.withDeleted) {
       if (!this.pipeline().some(stage => stage.$match?.[config.deleted.field] !== undefined)) {
-        this.pipeline().unshift({$match: {[config.deleted.field]: {$ne: true}}})
+        this.pipeline().unshift({$match: getWhereConditions(config)})
       }
     }
     next()
@@ -46,17 +56,24 @@ module.exports = function (schema, config) {
   })
 
   schema.pre(['restoreOne', 'restoreMany'], {document: false, query: true}, function (next) {
-    const update  = this.getUpdate()
-    update.$unset = {
-      [config.deleted.field]: true,
+      const update = this.getUpdate()
+
+      update.$unset = update.$unset || {}
+
+      if (config.mode === 'strict') {
+        update.$set = {
+          [config.deleted.field]: false
+        }
+      } else {
+        update.$unset[config.deleted.field] = true
+      }
+
+      if (config.deletedAt) update.$unset[config.deletedAt.field] = true
+      if (config.deletedBy) update.$unset[config.deletedBy.field] = true
+      this.setUpdate(update)
+      next()
     }
-
-    if (config.deletedAt) update.$unset[config.deletedAt.field] = true
-    if (config.deletedBy) update.$unset[config.deletedBy.field] = true
-
-    this.setUpdate(update)
-    next()
-  })
+  )
 
 
 }

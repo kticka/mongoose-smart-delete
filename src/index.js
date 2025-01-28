@@ -24,6 +24,8 @@ module.exports = function (schema, options = {}) {
     config.deletedBy.ref   = options.deletedBy.ref
   }
 
+  config.mode = ['strict', '$ne'].indexOf(options.mode) > -1 ? options.mode : '$ne'
+
   schema._smartDelete = true
 
   injectSchema(schema, config)

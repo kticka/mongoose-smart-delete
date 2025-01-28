@@ -17,6 +17,7 @@ Highly customizable, the plugin allows you to define custom field names for prop
         - [deleted](#deleted-optional)
         - [deletedAt](#deletedat-optional)
         - [deletedBy](#deletedby-optional)
+        - [mode](#mode-optional)
 - [Delete](#delete)
     - [Document.deleteOne()](#documentdeleteone)
     - [Model.deleteOne()](#modeldeleteone)
@@ -131,6 +132,28 @@ const Document = await DocumentModel.create({})
 await Document.deleteOne({deletedBy: User})
 
 ```
+
+### `mode` (optional)
+
+`$ne (default)` - In `$ne` mode, the query `{deleted: {$ne: true}}` is used. For newly created and restored items, the `deleted` attribute is undefined (unset).  
+`strict` - In `strict` mode, the query `{deleted: false}` is used. For newly created and restored items, the `deleted` attribute is explicitly set to `false`.
+
+**Note**: The fields `deletedAt` and `deletedBy` are always set to `undefined` (unset) for newly created and restored documents.
+
+```javascript
+Schema.plugin(MongooseSmartDelete, {
+  mode: '$ne|strict',
+});
+```
+
+**Important Note**: For existing projects, if you want to switch to `strict` mode, **you must update all existing documents to explicitly set the `deleted` attribute to `false`.**  
+Strict mode has better performance because it can leverage an index on the `deleted` attribute.
+
+
+```javascript
+await Model.updateMany({deleted: {$exists: false}}, {deleted: false})
+```
+
 
 ## Delete
 
