@@ -49,7 +49,7 @@ class MongooseSmartDelete {
     }
     this._op       = 'deleteMany'
     this._updateOp = 'updateMany'
-    return this.query(query, options)
+    return this.query(query, {}, options)
   }
 
   findOneAndDelete(query = {}, options = {}) {
