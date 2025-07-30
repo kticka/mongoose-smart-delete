@@ -16,8 +16,8 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.x]
-        mongoose-version: [7.5.1, 8.9.*]
+        node-version: [22.x, 24.x]
+        mongoose-version: [7.x, 8.x]
     steps:
     - name: Git checkout
       uses: actions/checkout@v4
