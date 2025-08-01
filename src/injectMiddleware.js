@@ -42,8 +42,12 @@ module.exports = function (schema, config) {
 
   schema.pre(['deleteOne', 'deleteMany', 'findOneAndDelete'], {document: false, query: true}, function (next) {
     if (this.getOptions().softDelete !== false) {
+      // Only update non-deleted documents
+      this.where(getWhereConditions(config))
+
       const update = this.getUpdate()
-      update.$set  = {
+
+      update.$set = {
         [config.deleted.field]: true
       }
       if (config.deletedAt) update.$set[config.deletedAt.field] = new Date()
@@ -56,6 +60,9 @@ module.exports = function (schema, config) {
   })
 
   schema.pre(['restoreOne', 'restoreMany'], {document: false, query: true}, function (next) {
+      // Only update deleted documents
+      this.where({[config.deleted.field]: true})
+
       const update = this.getUpdate()
 
       update.$unset = update.$unset || {}
@@ -74,6 +81,4 @@ module.exports = function (schema, config) {
       next()
     }
   )
-
-
 }
