@@ -24,9 +24,13 @@ function getWhereConditions(config) {
 }
 
 module.exports = function (schema, config) {
+
   schema.pre(queries, function (next) {
     if (!this.options?.withDeleted) {
-      this.where(getWhereConditions(config))
+      const query = this.getQuery()
+      if (query[config.deleted.field] === undefined) {
+        this.where(getWhereConditions(config))
+      }
     }
     next()
   })
