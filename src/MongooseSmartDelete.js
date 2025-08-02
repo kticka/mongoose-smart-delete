@@ -1,6 +1,7 @@
-const Mongoose  = require('mongoose')
-const Kareem    = require('kareem')
-const Methods = {}
+const Mongoose = require('mongoose')
+const Kareem   = require('kareem')
+const Methods  = {}
+
 class MongooseSmartDelete {
 
   constructor(context) {
@@ -98,6 +99,19 @@ class MongooseSmartDelete {
         self.constructor._middleware.execPost(op, self, [query.getOptions()], {}, cb)
       })
     }
+
+    const exec = query.exec
+    const self = this
+
+    query.exec = async function () {
+      const result = await exec.bind(query)()
+
+      if (['deleteOne', 'deleteMany'].includes(self._op)) return {acknowledged: result.acknowledged, deletedCount: result.modifiedCount}
+      if (['restoreOne', 'restoreMany'].includes(self._op)) return {acknowledged: result.acknowledged, restoredCount: result.modifiedCount}
+
+      return result
+    }
+
     return query
   }
 
