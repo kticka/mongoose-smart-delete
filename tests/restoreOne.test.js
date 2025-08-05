@@ -29,5 +29,15 @@ modes.forEach((mode) => {
       await Model.restoreOne({_id: Document._id})
       expect((await Model.findOne({}))._id).toEqual(Document._id)
     })
+
+    it('Document.restoreOne should return {acknowledged: true, restoredCount: 1}', async () => {
+      const result = await Document.restoreOne()
+      expect(result).toEqual({acknowledged: true, restoredCount: 1})
+    })
+
+    it('Model.restoreOne should return {acknowledged: true, restoredCount: 1}', async () => {
+      const result = await Model.restoreOne({_id: Document._id})
+      expect(result).toEqual({acknowledged: true, restoredCount: 1})
+    })
   })
 })

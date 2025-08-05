@@ -38,5 +38,15 @@ modes.forEach((mode) => {
       await Model.deleteOne({_id: Document._id}, {softDelete: false})
       expect(await Model.findOne({}, null, {withDeleted: true})).toBeNull()
     })
+
+    it('Document.deleteOne should return {acknowledged: true, deletedCount: 1}', async () => {
+      const result = await Document.deleteOne({softDelete: true})
+      expect(result).toEqual({acknowledged: true, deletedCount: 1})
+    })
+
+    it('Model.deleteOne should return {acknowledged: true, deletedCount: 1}', async () => {
+      const result = await Model.deleteOne({_id: Document._id}, {softDelete: true})
+      expect(result).toEqual({acknowledged: true, deletedCount: 1})
+    })
   })
 })

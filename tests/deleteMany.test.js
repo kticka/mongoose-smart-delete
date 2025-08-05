@@ -32,5 +32,10 @@ modes.forEach((mode) => {
       expect(objects.map(obj => obj.num)).toEqual([4, 5])
     })
 
+    it('Model.deleteMany should return {acknowledged: true, deletedCount: 3}', async () => {
+      const result = await Model.deleteMany({num: {$lte: 3}})
+      expect(result).toEqual({acknowledged: true, deletedCount: 3})
+    })
+
   })
 })

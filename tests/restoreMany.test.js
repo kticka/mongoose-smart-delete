@@ -24,5 +24,10 @@ modes.forEach((mode) => {
       await Model.restoreMany({num: {$lte: 2}})
       expect((await Model.find({})).map(obj => obj.num)).toEqual([1, 2, 4, 5])
     })
+
+    it('Model.restoreMany should return {acknowledged: true, restoredCount: 3}', async () => {
+      const result = await Model.restoreMany({})
+      expect(result).toEqual({acknowledged: true, restoredCount: 3})
+    })
   })
 })
