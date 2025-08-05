@@ -100,18 +100,6 @@ class MongooseSmartDelete {
       })
     }
 
-    const exec = query.exec
-    const self = this
-
-    query.exec = async function () {
-      const result = await exec.bind(query)()
-
-      if (['deleteOne', 'deleteMany'].includes(self._op)) return {acknowledged: result.acknowledged, deletedCount: result.modifiedCount}
-      if (['restoreOne', 'restoreMany'].includes(self._op)) return {acknowledged: result.acknowledged, restoredCount: result.modifiedCount}
-
-      return result
-    }
-
     return query
   }
 

@@ -85,4 +85,26 @@ module.exports = function (schema, config) {
       next()
     }
   )
+
+  schema.post(['deleteOne', 'deleteMany'], {document: false, query: true}, function (data, next) {
+    if (this.getOptions().softDelete !== false) {
+      data.deletedCount = data.modifiedCount
+    }
+    next()
+  })
+
+  schema.post(['restoreOne', 'restoreMany'], {document: false, query: true}, function (data, next) {
+    data.restoredCount = data.modifiedCount
+    next()
+  })
+
+  schema.post(['deleteOne', 'deleteMany', 'restoreOne', 'restoreMany'], {document: false, query: true}, function (data, next) {
+    if (this.getOptions().softDelete !== false) {
+      delete data.matchedCount
+      delete data.upsertedId
+      delete data.upsertedCount
+      delete data.modifiedCount
+    }
+    next()
+  })
 }
