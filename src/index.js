@@ -8,8 +8,6 @@ module.exports = function (schema, options = {}) {
 
   config.deleted       = {}
   config.deleted.field = typeof options.deleted?.field === 'string' ? options.deleted?.field : 'deleted'
-  config.deleted.unset = typeof options.deleted?.unset === 'boolean' ? options.deleted?.unset : true
-
 
   if (options.deletedAt) {
     config.deletedAt       = {}
