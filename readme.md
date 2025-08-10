@@ -443,6 +443,12 @@ Model.replaceOne({}).withDeleted();
 Model.countDocuments({}).withDeleted();
 ```
 
+### Model.distinct()
+
+```javascript
+Model.distinct('field').withDeleted();
+```
+
 # License
 
 The MIT License

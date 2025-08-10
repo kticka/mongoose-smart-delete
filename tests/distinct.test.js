@@ -1,5 +1,7 @@
-const createModel = require('./setup/createModel')
-const modes       = require('./setup/modes')
+const mongoose        = require('mongoose')
+const createModel     = require('./setup/createModel')
+const modes           = require('./setup/modes')
+const mongooseVersion = parseInt(mongoose.version.split('.')[0])
 
 modes.forEach((mode) => {
   describe(`SoftDelete - distinct (mode: ${mode})`, () => {
@@ -26,9 +28,12 @@ modes.forEach((mode) => {
       expect(await Model.distinct('name')).toEqual(['B', 'C'])
     })
 
-    it('Should include soft deleted documents when using the withDeleted option', async () => {
-      expect(await Model.distinct('name', {}, {withDeleted: true})).toEqual(['A', 'B', 'C'])
-    })
+    // Skip this test for mongoose < 8, because distinct() does support options as a third argument
+    if (mongooseVersion >= 8) {
+      it('Should include soft deleted documents when using the withDeleted option', async () => {
+        expect(await Model.distinct('name', {}, {withDeleted: true})).toEqual(['A', 'B', 'C'])
+      })
+    }
 
     it('Should include soft deleted documents when chaining withDeleted(true)', async () => {
       expect(await Model.distinct('name').withDeleted(true)).toEqual(['A', 'B', 'C'])
