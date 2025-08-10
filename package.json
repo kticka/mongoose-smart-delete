@@ -1,6 +1,6 @@
 {
   "name": "mongoose-smart-delete",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "A Mongoose plugin for implementing soft delete functionality, allowing documents to be marked as deleted without being removed from the database.",
   "main": "src/index.js",
   "directories": {

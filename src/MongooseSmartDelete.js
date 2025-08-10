@@ -75,8 +75,11 @@ class MongooseSmartDelete {
   }
 
   query() {
+
+    // Create a new query with the corresponding update operation
     const query = this.context[this._updateOp].apply(this.context, arguments)
 
+    // Move query middleware for delete/restore operation to the corresponding update operation
     const queryMiddleware = new Kareem()
 
     if (query._queryMiddleware._pres?.has(this._op)) queryMiddleware._pres.set(this._updateOp, query._queryMiddleware._pres.get(this._op))
@@ -84,8 +87,9 @@ class MongooseSmartDelete {
 
     query._queryMiddleware = queryMiddleware
 
+    // Move document middleware for delete/restore operation to the corresponding update operation
     if (this.context instanceof Mongoose.Document) {
-      // Replace document updateOne hooks with <deleteOp> hooks
+
       query._hooks._pres.set('exec', [])
       query._hooks._posts.set('exec', [])
 

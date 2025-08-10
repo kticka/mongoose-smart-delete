@@ -7,10 +7,13 @@ const queries = [
   'updateOne',
   'updateMany',
   'replaceOne',
-  'countDocuments',
+  'distinct',
   'deleteOne',
   'deleteMany',
-  'findOneAndDelete'
+  'findOneAndDelete',
+  'countDocuments',
+  // backwards compatibility
+  'count'
 ]
 
 function getWhereConditions(config) {
