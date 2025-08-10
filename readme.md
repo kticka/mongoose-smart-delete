@@ -39,6 +39,7 @@ Highly customizable, the plugin allows you to define custom field names for prop
     - [Model.updateMany()](#modelupdatemany)
     - [Model.replaceOne()](#modelreplaceone)
     - [Model.countDocuments()](#modelcountdocuments)
+    - [Model.distinct()](#modeldistinct)
 
 ## Installation
 
