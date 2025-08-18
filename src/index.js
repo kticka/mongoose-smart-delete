@@ -22,6 +22,12 @@ module.exports = function (schema, options = {}) {
     config.deletedBy.ref   = options.deletedBy.ref
   }
 
+  if (options.deletionId) {
+    config.deletionId       = {}
+    config.deletionId.field = typeof options.deletionId.field === 'string' ? options.deletionId.field : 'deletionId'
+  }
+
+
   config.mode = ['strict', '$ne'].indexOf(options.mode) > -1 ? options.mode : '$ne'
 
   schema._smartDelete = true

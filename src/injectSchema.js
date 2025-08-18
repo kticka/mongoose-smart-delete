@@ -31,4 +31,13 @@ module.exports = function (schema, config) {
       }
     })
   }
+
+  if (config.deletionId) {
+    schema.add({
+      [config.deletionId.field]: {
+        type:  mongoose.Schema.Types.ObjectId,
+        index: true
+      }
+    })
+  }
 }

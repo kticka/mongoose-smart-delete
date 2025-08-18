@@ -17,6 +17,7 @@ Highly customizable, the plugin allows you to define custom field names for prop
         - [deleted](#deleted-optional)
         - [deletedAt](#deletedat-optional)
         - [deletedBy](#deletedby-optional)
+        - [deletionId](#deletionid-optional)
         - [mode](#mode-optional)
 - [Delete](#delete)
     - [Document.deleteOne()](#documentdeleteone)
@@ -132,6 +133,50 @@ const Document = await DocumentModel.create({})
 
 await Document.deleteOne({deletedBy: User})
 
+```
+
+### `deletionId` (optional)
+
+Helps group deleted documents by a specific identifier. That identifier can later be used to restore certain documents. Useful for an 'undo' option or for cascading deletes.
+
+- For default behavior:
+
+```javascript
+Schema.plugin(MongooseSmartDelete, {
+  deletionId: true,
+})
+```
+
+- To specify a custom field:
+
+```javascript
+Schema.plugin(MongooseSmartDelete, {
+  deletionId: {
+    field: 'deletionId'
+  }
+})
+```
+
+Example:
+
+```javascript
+const Mongoose            = require('mongoose')
+const MongooseSmartDelete = require('mongoose-smart-delete')
+
+const UserSchema     = new Mongoose.Schema({})
+const DocumentSchema = new Mongoose.Schema({})
+
+DocumentSchema.plugin(MongooseSmartDelete, {
+  deletionId: true
+})
+
+const DocumentModel = Mongoose.model('Document', DocumentSchema)
+
+const Document = await DocumentModel.create({})
+
+await Document.deleteMany({})
+
+// All deleted documents will have the same deletionId
 ```
 
 ### `mode` (optional)

@@ -1,3 +1,5 @@
+const mongoose = require('mongoose')
+
 const queries = [
   'find',
   'findOne',
@@ -48,7 +50,8 @@ module.exports = function (schema, config) {
   })
 
   schema.pre(['deleteOne', 'deleteMany', 'findOneAndDelete'], {document: false, query: true}, function (next) {
-    if (this.getOptions().softDelete !== false) {
+    const options = this.getOptions()
+    if (options.softDelete !== false) {
       // Only update non-deleted documents
       this.where(getWhereConditions(config))
 
@@ -57,10 +60,16 @@ module.exports = function (schema, config) {
       update.$set = {
         [config.deleted.field]: true
       }
+
       if (config.deletedAt) update.$set[config.deletedAt.field] = new Date()
-      if (config.deletedBy) {
-        update.$set[config.deletedBy.field] = this.getOptions().deletedBy
+      if (config.deletedBy) update.$set[config.deletedBy.field] = this.options.deletedBy
+
+
+      if (config.deletionId) {
+        this.options.deletionId ??= new mongoose.Types.ObjectId()
+        update.$set[config.deletionId.field] = this.options.deletionId
       }
+
       this.setUpdate(update)
     }
     next()
@@ -84,6 +93,7 @@ module.exports = function (schema, config) {
 
       if (config.deletedAt) update.$unset[config.deletedAt.field] = true
       if (config.deletedBy) update.$unset[config.deletedBy.field] = true
+      if (config.deletionId) update.$unset[config.deletionId.field] = true
       this.setUpdate(update)
       next()
     }
